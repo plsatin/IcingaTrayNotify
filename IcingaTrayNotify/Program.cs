@@ -233,7 +233,9 @@ namespace IcingaTrayNotify
 
                     trayIcon.BalloonTipText = text;
                     bool ShowBalloon = true;
-                    
+
+                    string message = postParams["message"];
+
                     if (postParams["icon"] == "WARNING") {
 
                         trayIcon.BalloonTipIcon = ToolTipIcon.Warning;
@@ -251,13 +253,13 @@ namespace IcingaTrayNotify
                         ShowBalloon = false;
                         trayIcon.BalloonTipIcon = ToolTipIcon.Info;
                         LogMessageToFile("Запрос скриншота");
-                        TakeScreenShot();
+                        TakeScreenShot(message);
                     } else {
                         trayIcon.BalloonTipIcon = ToolTipIcon.Info;
                     }
 
 
-                    string message = postParams["message"];
+                    
 
                     trayIcon.BalloonTipTitle = "IcingaTrayNotify. Сообщение:";
 
@@ -413,13 +415,20 @@ namespace IcingaTrayNotify
             }
         }
 
-        private void TakeScreenShot()
+        private void TakeScreenShot(string screenshotPath)
         {
             Bitmap bmp = new Bitmap(Screen.PrimaryScreen.Bounds.Width, Screen.PrimaryScreen.Bounds.Height);
             using (Graphics g = Graphics.FromImage(bmp))
             {
                 g.CopyFromScreen(0, 0, 0, 0, Screen.PrimaryScreen.Bounds.Size);
-                bmp.Save("C:\\Scripts\\traynotify\\screenshot.png");  // Продумать куда сохранять!?!
+                if (!String.IsNullOrEmpty(screenshotPath))
+                {
+                    bmp.Save(screenshotPath);
+                } else
+                {
+                    bmp.Save("C:\\Windows\\Temp\\screenshot.png");
+                }
+                
             }
         }
 
